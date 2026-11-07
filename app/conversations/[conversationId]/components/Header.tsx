@@ -1,41 +1,38 @@
 "use client";
 
 import { Conversation, User } from "@prisma/client";
-
 import useOtherUser from "@/app/hooks/useOtherUser";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { HiChevronLeft, HiEllipsisHorizontal } from "react-icons/hi2";
 import Avatar from "@/app/components/Avatar";
 import AvatarGroup from "@/app/components/AvatarGroup";
-
 import ProfileDrawer from "./ProfileDrawer";
 import useActiveList from "@/app/hooks/useActiveList";
 
 interface HeaderProps {
   conversation: Conversation & {
-    users: User[]
-  }
-};
+    users: User[];
+  };
+}
 
-const Header: React.FC<HeaderProps> = ({
-  conversation
-}) => {
+const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
+
   const { members } = useActiveList();
-  const isActive = members.indexOf(otherUser?.email!) !== -1;
+  const isActive = members.indexOf(otherUser?.email || "") !== -1;
 
   const statusText = useMemo(() => {
     if (conversation.isGroup) {
       return `${conversation.users.length} members`;
     }
-    
-    return isActive ? 'Active' : 'Offline';
+    return isActive ? "Active now" : "Offline";
   }, [conversation, isActive]);
 
-  return ( 
+  const title = conversation.name || otherUser.name || "Conversation";
+
+  return (
     <>
       <ProfileDrawer
         data={conversation}
@@ -44,66 +41,77 @@ const Header: React.FC<HeaderProps> = ({
       />
       <div
         className="
-          bg-white
+          backdrop-blur-xl
+          bg-slate-900/80
+          border-b
+          border-slate-800/70
           w-full
           flex
-          border-b-[1px]
-          sm:px-4
           py-3
           px-4
-          lg:px-6
+          sm:px-6
           justify-between
           items-center
-          shadow-sm
+          shadow-lg
+          z-20
         "
       >
         <div className="flex gap-3 items-center">
-          <Link 
+          <Link
             className="
               lg:hidden
-              block
-              text-purple-500
-              hover:text-purple-600
+              p-1.5
+              -ml-1
+              rounded-lg
+              text-slate-400
+              hover:text-indigo-400
+              hover:bg-slate-800
               transition
               cursor-pointer
             "
             href="/conversations"
           >
-            <HiChevronLeft size={32} />
+            <HiChevronLeft size={24} />
           </Link>
           {conversation.isGroup ? (
             <AvatarGroup users={conversation.users} />
           ) : (
-            <Avatar user={otherUser} />
+            <Avatar user={otherUser} size="md" />
           )}
           <div className="flex flex-col">
-            <div>
-              {conversation.name || otherUser.name}
-            </div>
-            <div
-              className="
-                text-sm
-                font-light
-                text-neutral-500
-              "
-            >
-              {statusText}
+            <h2 className="text-base font-semibold text-slate-100 leading-tight">
+              {title}
+            </h2>
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              {!conversation.isGroup && isActive && (
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              )}
+              <span>{statusText}</span>
             </div>
           </div>
         </div>
-        <HiEllipsisHorizontal
-          size={32}
+
+        <button
           onClick={() => setDrawerOpen(true)}
+          title="Conversation options"
           className="
-            text-sky-500
+            p-2
+            rounded-xl
+            text-slate-400
+            hover:text-slate-200
+            hover:bg-slate-800
+            border
+            border-transparent
+            hover:border-slate-700/60
+            transition-all
             cursor-pointer
-            hover:text-sky-600
-            transition
           "
-        />
+        >
+          <HiEllipsisHorizontal size={24} />
+        </button>
       </div>
     </>
-   );
-}
- 
+  );
+};
+
 export default Header;

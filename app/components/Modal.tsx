@@ -10,21 +10,10 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  children
-}) => {
-  return ( 
-    <Transition
-      show={isOpen}
-      as={Fragment}
-    >
-      <Dialog
-        as="div"
-        className="relative z-50"
-        onClose={onClose}
-      >
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+  return (
+    <Transition show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -34,28 +23,11 @@ const Modal: React.FC<ModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div
-            className="
-              fixed
-              inset-0
-              bg-gray-500
-              bg-opacity-75
-              transition-opacity
-            "
-          />
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity" />
         </TransitionChild>
+
         <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div
-            className="
-              flex
-              min-h-full
-              items-center
-              justify-center
-              p-4
-              text-center
-              sm:p-0
-            "
-          >
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
@@ -70,53 +42,41 @@ const Modal: React.FC<ModalProps> = ({
                   relative
                   transform
                   overflow-hidden
-                  rounded-lg
-                  bg-white
-                  px-4
-                  pb-4
+                  rounded-2xl
+                  backdrop-blur-xl
+                  bg-slate-900/95
+                  border
+                  border-slate-800/80
+                  px-5
+                  pb-5
+                  pt-6
                   text-left
-                  shadow-xsl
+                  shadow-2xl
+                  shadow-black/60
                   transition-all
                   w-full
                   sm:my-8
                   sm:w-full
                   sm:max-w-lg
-                  sm:p-6
+                  sm:p-7
                 "
               >
-                <div
-                  className="
-                    absolute
-                    right-0
-                    top-0
-                    hidden
-                    pr-4
-                    pt-4
-                    sm:block
-                    z-10
-                  "
-                >
+                <div className="absolute right-0 top-0 pr-4 pt-4 z-10">
                   <button
                     type="button"
                     className="
-                      rounded-md
-                      bg-white
-                      text-gray-400
-                      hover:text-gray-500
+                      rounded-lg
+                      p-1.5
+                      text-slate-400
+                      hover:text-slate-200
+                      hover:bg-slate-800
                       focus:outline-none
-                      focus:ring-2
-                      focus:ring-sky-500
-                      focus:ring-offset-2
+                      transition-colors
                     "
                     onClick={onClose}
                   >
                     <span className="sr-only">Close</span>
-                    <IoClose
-                      className="
-                        h-6
-                        w-6
-                      "
-                    />
+                    <IoClose className="h-5 w-5" />
                   </button>
                 </div>
                 {children}
@@ -126,7 +86,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
       </Dialog>
     </Transition>
-   );
-}
- 
+  );
+};
+
 export default Modal;

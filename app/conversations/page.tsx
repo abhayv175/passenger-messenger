@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-
 import useConversation from "../hooks/useConversation";
 import EmptyState from "../components/EmptyState";
 
@@ -11,13 +10,13 @@ const Home = () => {
   return (
     <div
       className={clsx(
-        "lg:pl-80 h-full lg:block",
-        isOpen ? 'block' : 'hidden'
+        "lg:pl-80 xl:pl-96 h-full lg:block transition-all duration-200",
+        isOpen ? "block" : "hidden"
       )}
     >
       <EmptyState />
     </div>
-  )
+  );
 };
 
 export default Home;

@@ -1,8 +1,14 @@
-export { auth as middleware } from "@/auth";
+import { withAuth } from "next-auth/middleware";
 
-// export const config = {
-//   matcher: [
-//     "/users/:path*",
-//     "/conversations/:path*"
-//   ]
-// };
+export default withAuth({
+  pages: {
+    signIn: "/",
+  },
+});
+
+export const config = {
+  matcher: [
+    "/conversations/:path*",
+    "/users/:path*",
+  ],
+};

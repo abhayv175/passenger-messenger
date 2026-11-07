@@ -1,77 +1,74 @@
 'use client';
 
 import clsx from 'clsx';
-import {
-  FieldErrors,
-  FieldValues,
-  UseFormRegister
-} from 'react-hook-form';
+import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface InputProps {
   label: string;
   id: string;
   type?: string;
   required?: boolean;
-  register: UseFormRegister<FieldValues>,
-  errors: FieldErrors,
+  register: UseFormRegister<FieldValues>;
+  errors: FieldErrors;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   label,
   id,
-  type,
+  type = 'text',
   required,
   register,
   errors,
-  disabled
+  disabled,
+  placeholder,
 }) => {
-  return ( 
+  return (
     <div>
-      <label 
-        className="
-          block
-          text-sm
-          font-medium
-          leading-6
-          text-gray-900
-        "
+      <label
         htmlFor={id}
+        className="block text-sm font-medium text-slate-300 mb-1.5"
       >
         {label}
       </label>
-      <div className="mt-2">
+      <div className="relative">
         <input
           id={id}
           type={type}
           autoComplete={id}
           disabled={disabled}
+          placeholder={placeholder}
           {...register(id, { required })}
-          className={clsx(`
+          className={clsx(
+            `
             form-input
             block
             w-full
-            rounded-md
-            border-0
-            py-1.5
-            text-gray-900
-            shadow-sm
-            ring-1
-            ring-inset
-            ring-gray-300
-            placeholder:text-gray-400
+            rounded-xl
+            bg-slate-900/90
+            border
+            border-slate-800
+            py-2.5
+            px-3.5
+            text-slate-100
+            placeholder:text-slate-500
+            text-sm
+            shadow-inner
+            transition-all
+            duration-200
+            focus:outline-none
+            focus:border-indigo-500
             focus:ring-2
-            focus:ring-inset
-            focus:ring-sky-600
-            sm:text-sm
-            sm:leading-6`, 
-            errors[id] && "focus:ring-rose-500",
-            disabled && "opacity-50 cursor-default"
+            focus:ring-indigo-500/20
+          `,
+            errors[id] && 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20',
+            disabled && 'opacity-50 cursor-not-allowed'
           )}
         />
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default Input;

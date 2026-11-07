@@ -3,7 +3,7 @@
 import Button from "@/app/components/Button";
 import Modal from "@/app/components/Modal";
 import useConversation from "@/app/hooks/useConversation";
-import { Dialog, DialogTitle } from "@headlessui/react";
+import { DialogTitle } from "@headlessui/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -15,10 +15,7 @@ interface ConfirmModalProps {
   onClose: () => void;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({
-  isOpen,
-  onClose
-}) => {
+const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const { conversationId } = useConversation();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,94 +23,48 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const onDelete = useCallback(() => {
     setIsLoading(true);
 
-    axios.delete(`/api/conversations/${conversationId}`)
-    .then(() => {
-      onClose();
-      router.push('/conversations');
-      router.refresh();
-    })
-    .catch(() => toast.error('Something went wrong!'))
-    .finally(() => setIsLoading(false))
+    axios
+      .delete(`/api/conversations/${conversationId}`)
+      .then(() => {
+        toast.success("Dialogue deleted");
+        onClose();
+        router.push("/conversations");
+        router.refresh();
+      })
+      .catch(() => toast.error("Could not delete dialogue!"))
+      .finally(() => setIsLoading(false));
   }, [conversationId, router, onClose]);
 
-  return ( 
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-    >
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
       <div className="sm:flex sm:items-start">
-        <div
-          className="
-            mx-auto
-            flex
-            h-12
-            w-12
-            flex-shrink-0
-            items-center
-            justify-center
-            rounded-full
-            bg-red-100
-            sm:mx-0
-            sm:h-10
-            sm:w-10
-          "
-        >
-          <FiAlertTriangle
-            className="h-6 w-6 text-red-600"
-          />
+        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 border border-rose-500/20 sm:mx-0 sm:h-10 sm:w-10">
+          <FiAlertTriangle className="h-5 w-5 text-rose-500" />
         </div>
-        <div
-          className="
-            mt-3
-            text-center
-            sm:ml-4
-            sm:mt-0
-            sm:text-left
-          "
-        >
+        <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
           <DialogTitle
             as="h3"
-            className="
-              text-base
-              font-semibold
-              leading-6
-              text-gray-900
-            "
+            className="text-lg font-bold text-slate-100"
           >
-            Delete conversation
+            Delete Dialogue
           </DialogTitle>
           <div className="mt-2">
-            <p className="text-sm text-gray-500">
-              Are you sure you want to delete this conversation? This action cannot be undone.
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Are you certain you wish to purge this conversation? This will permanently delete all transmitted messages for all participants.
             </p>
           </div>
         </div>
       </div>
-      <div
-        className="
-          mt-5
-          sm:mt-4
-          sm:flex
-          sm:flex-row-reverse
-        "
-      >
-        <Button
-          disabled={isLoading}
-          danger
-          onClick={onDelete}
-        >
-          Delete
+      <div className="mt-6 sm:flex sm:flex-row-reverse gap-3">
+        <Button disabled={isLoading} danger onClick={onDelete}>
+          Delete Permanently
         </Button>
-        <Button
-          disabled={isLoading}
-          secondary
-          onClick={onClose}
-        >
-          Cancel
+        <Button disabled={isLoading} secondary onClick={onClose}>
+          Keep Conversation
         </Button>
       </div>
     </Modal>
-   );
-}
- 
+  );
+};
+
 export default ConfirmModal;

@@ -11,31 +11,37 @@ const useActiveChannel = () => {
     let channel = activeChannel;
 
     if (!channel) {
-      channel = pusherClient.subscribe('presence-messenger');
+      channel = pusherClient.subscribe("presence-messenger");
       setActiveChannel(channel);
     }
 
-    channel.bind('pusher:subscription_succeeded', (members: Members) => {
+    const handleSubscriptionSucceeded = (members: Members) => {
       const initialMembers: string[] = [];
-
       members.each((member: Record<string, any>) => initialMembers.push(member.id));
       set(initialMembers);
-    });
+    };
 
-    channel.bind("pusher:member_added", (member: Record<string, any>) => {
+    const handleMemberAdded = (member: Record<string, any>) => {
       add(member.id);
-    });
+    };
 
-    channel.bind("pusher:member_removed", (member: Record<string, any>) => {
+    const handleMemberRemoved = (member: Record<string, any>) => {
       remove(member.id);
-    });
+    };
+
+    channel.bind("pusher:subscription_succeeded", handleSubscriptionSucceeded);
+    channel.bind("pusher:member_added", handleMemberAdded);
+    channel.bind("pusher:member_removed", handleMemberRemoved);
 
     return () => {
-      if (activeChannel) {
-        pusherClient.unsubscribe('presence-messenger');
+      if (channel) {
+        channel.unbind("pusher:subscription_succeeded", handleSubscriptionSucceeded);
+        channel.unbind("pusher:member_added", handleMemberAdded);
+        channel.unbind("pusher:member_removed", handleMemberRemoved);
+        pusherClient.unsubscribe("presence-messenger");
         setActiveChannel(null);
       }
-    }
+    };
   }, [activeChannel, set, add, remove]);
 };
 

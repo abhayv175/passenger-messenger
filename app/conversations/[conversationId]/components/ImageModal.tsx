@@ -9,27 +9,24 @@ interface ImageModalProps {
   src?: string | null;
 }
 
-const ImageModal: React.FC<ImageModalProps> = ({
-  isOpen,
-  onClose,
-  src
-}) => {
+const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, src }) => {
   if (!src) {
     return null;
   }
 
-  return ( 
+  return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="w-80 h-80">
+      <div className="relative w-full h-[400px] sm:h-[500px] rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center">
         <Image
-          alt="Image"
-          className="object-cover"
+          alt="Shared Image Preview"
+          className="object-contain"
           fill
+          sizes="(max-width: 768px) 100vw, 600px"
           src={src}
         />
       </div>
     </Modal>
   );
-}
- 
+};
+
 export default ImageModal;
