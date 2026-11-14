@@ -22,10 +22,9 @@ const AuthForm = () => {
 
   useEffect(() => {
     if (session?.status === "authenticated") {
-      router.push("/conversations");
-      router.refresh();
+      window.location.assign("/conversations");
     }
-  }, [session?.status, router]);
+  }, [session?.status]);
 
   const toggleVariant = useCallback(() => {
     setVariant((prev) => (prev === "LOGIN" ? "REGISTER" : "LOGIN"));
@@ -59,14 +58,18 @@ const AuthForm = () => {
         .then((callback) => {
           if (callback?.error) {
             toast.error("Registration succeeded, please sign in.");
+            setVariant("LOGIN");
           }
           if (callback?.ok && !callback?.error) {
             toast.success("Welcome aboard!");
-            router.push("/conversations");
-            router.refresh();
+            window.location.assign("/conversations");
           }
         })
-        .catch(() => toast.error("Could not register. Email may already exist."))
+        .catch((err) => {
+          const msg =
+            err?.response?.data || "Could not register. Email may already exist.";
+          toast.error(typeof msg === "string" ? msg : "Could not register.");
+        })
         .finally(() => setIsLoading(false));
     }
 
@@ -78,19 +81,30 @@ const AuthForm = () => {
       })
         .then((callback) => {
           if (callback?.error) {
-            toast.error("Invalid credentials");
+            toast.error(
+              "Invalid credentials. Please verify your password or sign in with Google."
+            );
           }
           if (callback?.ok && !callback?.error) {
             toast.success("Welcome back!");
-            router.push("/conversations");
-            router.refresh();
+            window.location.assign("/conversations");
           }
+        })
+        .catch(() => {
+          toast.error("Something went wrong during sign in");
         })
         .finally(() => setIsLoading(false));
     }
   };
 
   const socialAction = (action: string) => {
+    if (action === "github" && !process.env.NEXT_PUBLIC_GITHUB_ID) {
+      toast.error(
+        "GitHub sign-in is not configured yet. Please use Google or sign in with email."
+      );
+      return;
+    }
+
     setIsLoading(true);
 
     signIn(action, { callbackUrl: "/conversations" })
@@ -98,6 +112,9 @@ const AuthForm = () => {
         if (callback?.error) {
           toast.error("Social authentication failed");
         }
+      })
+      .catch(() => {
+        toast.error("Social authentication failed");
       })
       .finally(() => setIsLoading(false));
   };

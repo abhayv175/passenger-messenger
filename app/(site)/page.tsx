@@ -4,6 +4,8 @@ import { HiSparkles } from "react-icons/hi2";
 import getSession from "@/app/actions/getSession";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 const Auth = async () => {
   const session = await getSession();
 
